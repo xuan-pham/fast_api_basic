@@ -1,4 +1,4 @@
-import ast
+
 import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
@@ -8,7 +8,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 
 class Config(BaseSettings):
-    DATABASE_URL: str = os.getenv("SQL_DATABASE_URL", "")
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
 
 
 config = Config()
