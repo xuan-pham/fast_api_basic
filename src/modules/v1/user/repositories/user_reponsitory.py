@@ -1,15 +1,34 @@
-from sqlalchemy.orm import Session
-from src.models.user import User
-from src.schemas import sche_user
+from src.config.db.database import SessionLocal
+from src.models import User
+from src.schemas.sche_user import UserCreateRequest
+from sqlalchemy import or_
 
 
 class UserRepository:
     def __init__(self):
-        self.db = Session()
+        self.db = SessionLocal()
 
-    def create(self, body: sche_user.UserCreateRequest) -> sche_user.UserCreateRequest:
+    def get_user_by_id(self, user_id: int) -> User:
+        return self.db.query(User).filter(User.id == user_id).first()
+
+    def get_user_by_email(self, email: str) -> User:
+        return self.db.query(User).filter(User.email == email).first()
+
+    def get_list(self, skip: int, limit: int) -> list[User]:
+        return self.db.query(User).offset(skip).limit(limit).all()
+
+    def create(self, body: UserCreateRequest) -> User:
         db_user = User(**body.dict())
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
-        return body
+        return db_user
+
+    def update(self, body):
+        pass
+
+    def delete(self, user_id: int):
+        db_user = self.db.query(User).get(user_id)
+        self.db.delete(db_user)
+        self.db.commit()
+        self.db.refresh(db_user)
