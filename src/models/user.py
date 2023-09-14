@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, String
-from .base import BareBaseModel
+from ..models.base import BareBaseModel
 
 
 class User(BareBaseModel):
