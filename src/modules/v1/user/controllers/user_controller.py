@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from ..services.user_service import UserService
-from src.schemas.sche_user import UserCreateRequest
+from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
 
 router = APIRouter()
 user_service = UserService()
@@ -25,8 +25,8 @@ def create(body: UserCreateRequest):
 
 
 @router.put('/update/{user_id}')
-def update(body):
-    data = user_service.update(body)
+def update(user_id: int, body: UserUpdateRequest):
+    data = user_service.update(user_id, body)
     return data
 
 

@@ -1,7 +1,6 @@
 from src.config.db.database import SessionLocal
 from src.models import User
-from src.schemas.sche_user import UserCreateRequest
-from sqlalchemy import or_
+from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
 
 
 class UserRepository:
@@ -22,10 +21,15 @@ class UserRepository:
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
+
+        del db_user.password
         return db_user
 
-    def update(self, body):
-        pass
+    def update(self, user: User, body: UserUpdateRequest):
+        for field, value in body.dict(exclude_unset=True).items():
+            setattr(user, field, value)
+        self.db.commit()
+        self.db.refresh(user)
 
     def delete(self, user_id: int):
         db_user = self.db.query(User).get(user_id)

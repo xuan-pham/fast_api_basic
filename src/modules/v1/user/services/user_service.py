@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from src.schemas import sche_user
+from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
 from ..repositories.user_reponsitory import UserRepository
 from src.helpers.unit import hash_pass
 
@@ -28,14 +28,14 @@ class UserService:
                 detail=str(err)
             )
 
-    def create(self, body: sche_user.UserCreateRequest):
+    def create(self, body: UserCreateRequest):
         try:
             new_pass = hash_pass(body.password)
             body.password = new_pass
 
             check_user = self.user_repo.get_user_by_email(body.email)
             if check_user:
-                return HTTPException(status_code=400, detail="Email already registered")
+                raise HTTPException(status_code=400, detail="Email already registered")
 
             result = self.user_repo.create(body=body)
             return result
@@ -45,10 +45,17 @@ class UserService:
                 detail=str(err)
             )
 
-    def update(self, body):
+    def update(self, user_id: int, body: UserUpdateRequest):
         try:
-            data = self.user_repo.update(body)
-            return data
+            user = self.user_repo.get_user_by_id(user_id)
+            if not user:
+                return HTTPException(status_code=404, detail="User not found")
+
+            self.user_repo.update(user, body)
+            return HTTPException(
+                status_code=status.HTTP_200_OK,
+                detail='Update user successfully'
+            )
         except Exception as err:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
