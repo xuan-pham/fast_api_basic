@@ -1,25 +1,26 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Path
+from typing import Annotated
 from ..services.user_service import UserService
-from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
+from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest, UserBase
 
 router = APIRouter()
 user_service = UserService()
 
 
-@router.get('/{user_id}')
-def index(user_id: int):
-    data = user_service.get_id(user_id)
-    return data
-
-
 @router.get('')
-def show(skip: int = 0, limit: int = 100):
+def show(skip: Annotated[int, Query()] = 0, limit: Annotated[int, Query()] = 100):
     data = user_service.get_list(skip, limit)
     return data
 
 
+@router.get('/{user_id}')
+def index(user_id: Annotated[int, Path(ge=1)]):
+    data = user_service.get_id(user_id)
+    return data
+
+
 @router.post('/create')
-def create(body: UserCreateRequest):
+def create(body: UserCreateRequest) -> UserBase:
     data = user_service.create(body)
     return data
 

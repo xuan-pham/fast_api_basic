@@ -21,8 +21,6 @@ class UserRepository:
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
-
-        del db_user.password
         return db_user
 
     def update(self, user: User, body: UserUpdateRequest):
