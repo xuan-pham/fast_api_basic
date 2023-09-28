@@ -1,2 +1,2 @@
-from src.models.base import Base
-from src.models.user import User
+from .base import Base
+from .user import User

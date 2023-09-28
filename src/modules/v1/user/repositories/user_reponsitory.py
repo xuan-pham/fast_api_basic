@@ -1,6 +1,6 @@
 from src.config.db.database import SessionLocal
 from src.models import User
-from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
+from src.schemas import sche_user
 
 
 class UserRepository:
@@ -16,14 +16,14 @@ class UserRepository:
     def get_list(self, skip: int, limit: int) -> list[User]:
         return self.db.query(User).offset(skip).limit(limit).all()
 
-    def create(self, body: UserCreateRequest) -> User:
+    def create(self, body: sche_user.UserCreateRequest) -> User:
         db_user = User(**body.dict())
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
         return db_user
 
-    def update(self, user: User, body: UserUpdateRequest):
+    def update(self, user: User, body: sche_user.UserUpdateRequest):
         for field, value in body.dict(exclude_unset=True).items():
             setattr(user, field, value)
         self.db.commit()

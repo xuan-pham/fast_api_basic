@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Query, Path
+from fastapi import APIRouter, Query, Path, Depends
 from typing import Annotated
-from ..services.user_service import UserService
 from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest, UserBase
+from ..user import UserService
 
 router = APIRouter()
 user_service = UserService()

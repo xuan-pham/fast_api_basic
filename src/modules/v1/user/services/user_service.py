@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
-from src.schemas.sche_user import UserCreateRequest, UserUpdateRequest
+from src.schemas import sche_user
 from ..repositories.user_reponsitory import UserRepository
-from src.helpers.unit import hash_pass
+from src.helpers.unit import hash_password
 
 
 class UserService:
@@ -28,9 +28,9 @@ class UserService:
                 detail=str(err)
             )
 
-    def create(self, body: UserCreateRequest):
+    def create(self, body: sche_user.UserCreateRequest):
         try:
-            new_pass = hash_pass(body.password)
+            new_pass = hash_password(body.password)
             body.password = new_pass
 
             check_user = self.user_repo.get_user_by_email(body.email)
@@ -45,7 +45,7 @@ class UserService:
                 detail=str(err)
             )
 
-    def update(self, user_id: int, body: UserUpdateRequest):
+    def update(self, user_id: int, body: sche_user.UserUpdateRequest):
         try:
             user = self.user_repo.get_user_by_id(user_id)
             if not user:
